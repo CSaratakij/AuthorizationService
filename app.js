@@ -121,7 +121,7 @@ setInterval(() => {
         if (err)
             console.log(err)
         });
-}, MAX_REFRESH_TOKEN_LIFE_TIME);
+}, DAY_MS);
 
 /*
 function generateKeyPair() {

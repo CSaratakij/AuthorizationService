@@ -1,0 +1,8 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/74fba200-01ed-4d91-9f5b-be3bacc20cae/resourceGroups/authorizationresource/providers/Microsoft.Web/sites/authshootinggame",
+    "appService.deploySubpath": ""
+}
