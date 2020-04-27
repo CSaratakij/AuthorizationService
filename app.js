@@ -247,7 +247,6 @@ function generateIDToken(userID, callback, lifeTime) {
             name: doc.fullname,
             email: doc.username,
             isVerified: doc.isVerified
-            // nickName: doc.nickName
         };
 
         let resultExpire = lifeTime || "10m";
@@ -1104,6 +1103,77 @@ app.post("/token/revoke", [
             }
             res.status(200).json(result);
         });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(400).send();
+    }
+});
+
+app.get("/user/publicinfo", [
+    query("client_id").isIn(CLIENT_WHITELIST),
+    oneOf([
+        [
+            query("user_id").exists()
+        ],
+        [
+            query("email").isEmail()
+        ]
+    ])
+],
+(req, res) => {
+    try {
+        validationResult(req).throw();
+
+        if (req.query.user_id) {
+
+            User.find().where('_id').in(req.query.user_id).exec((err, doc) => {
+                if (err) {
+                    res.status(500).send();
+                    return;
+                }
+
+                if (doc == undefined) {
+                    res.status(404).send();
+                    return;
+                }
+
+                let info = [];
+
+                for (let element of doc) {
+                    info.push({
+                        id: element._id,
+                        name: element.fullname,
+                        joinDate: element.joinDate
+                    })
+                }
+
+                res.status(200).json(info);
+            });
+        }
+        else if (req.query.email) {
+            let email = req.query.email.toLowerCase();
+
+            User.findOne({ username: email }, (err, doc) => {
+                if (err) {
+                    res.status(500).send();
+                    return;
+                }
+
+                if (doc == undefined) {
+                    res.status(404).send();
+                    return;
+                }
+
+                let info = {
+                    id: doc._id,
+                    name: doc.fullname,
+                    joinDate: doc.joinDate
+                }
+
+                res.status(200).json(info);
+            });
+        }
     }
     catch (error) {
         console.log(error);
